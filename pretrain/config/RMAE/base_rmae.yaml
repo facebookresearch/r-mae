@@ -1,0 +1,55 @@
+model_config:
+  rmae:
+    mask_ratio: 0.75
+    mae_vit:
+      arch: rmae_base_patch16
+      params:
+        norm_pix_loss: true
+        use_mae_loss: true
+        num_region: 0
+        mae_loss_weight: 1.0
+        bg_loss_weight: 1.0
+        region_loss_weight: 1.0
+        region_mask_ratio: 0.75
+        region_enc_dim: 128
+        region_enc_depth: 1
+        region_enc_num_heads: 8
+        region_dec_dim: 128
+        region_dec_depth: 1
+        region_dec_num_heads: 8
+        region_sample_type: random
+        region_cross_layer: 8
+
+optimizer:
+  type: adamw
+  params:
+    lr: 2.4e-3 # 1.5e-4 * batch_size / 256
+    use_oss: false
+    weight_decay: 0.05
+    wd_norm: 0.0
+    wd_bias: 0.0
+    eps: 1.0e-08
+    betas:
+      - 0.9
+      - 0.95
+
+scheduler:
+  type: cosine_annealing
+  params:
+    T_max: ${training.max_update}
+    eta_min: 0.0
+    use_warmup: true
+    warmup_factor: 0.0
+    warmup_iterations: 12000
+
+training:
+  max_update: 144000
+  batch_size: 4096
+  iter_per_update: 1
+  find_unused_parameters: false
+  tensorboard: true
+  evaluation_interval: 5
+  checkpoint_interval: 1
+  log_interval: 200
+  run_type: train
+  iou_type: null
